@@ -1,28 +1,28 @@
-import { Router, Request, Response} from 'express';
+import { Router } from 'express';
+import fs from 'fs/promises';
 const router = Router();
 
 import HistoryService from '../../service/historyService.js';
 import WeatherService from '../../service/weatherService.js';
 
-// TODO: POST Request with city name to retrieve weather data
-// TODO: GET weather data from city name
-// TODO: save city to search history
-router.post('/', async (req: Request, res: Response) => { 
-  const { city } = req.body;
-  if (city) {
+// POST Request with city name to retrieve weather data
+router.post('/', async (req, res) => { 
+  const { cityName } = req.body;
+  if (cityName) {
     try {
-      const weather = await WeatherService.getWeatherForCity(city);
-      await HistoryService.addCity(city); // Save city to search history
+      const weather = await WeatherService.getWeatherForCity(cityName);
+      await HistoryService.addCity(cityName); // Save city to search history
       res.json(weather);
     } catch (error) { 
       res.status(500).send('Error retrieving weather data'); 
-    } } else {
-      res.status(400).send('City name is required');
-    } 
-  });
+    }
+  } else {
+    res.status(400).send('City name is required');
+  } 
+});
 
-// TODO: GET search history
-router.get('/history', async (_req: Request, res: Response) => {
+// GET search history at /api/weather/history
+router.get('/history', async (_req, res) => {
   try { 
     const history = await HistoryService.getCities();
     res.json(history); 
@@ -31,15 +31,27 @@ router.get('/history', async (_req: Request, res: Response) => {
   }
 });
 
-// * BONUS TODO: DELETE city from search history
-router.delete('/history/:id', async (req: Request, res: Response) => {
-  const { id } = req.params; 
+// BONUS: DELETE city from search history
+router.delete('/history/:id', async (req, res) => {
+  const id = req.params.id; 
   try { 
     await HistoryService.removeCity(id); 
     res.send('Search history entry deleted');
   } catch (error) { 
     res.status(500).send('Error deleting search history entry');
   } 
+});
+
+// Define the /api/weather/history endpoint to read from the JSON file
+router.get('/history/file', async (_req, res) => {
+  try {
+    const data = await fs.readFile('db/searchHistory.json', 'utf8'); // Adjust the path as needed
+    const jsonData = JSON.parse(data);
+    res.json(jsonData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error reading history data' });
+  }
 });
 
 export default router;

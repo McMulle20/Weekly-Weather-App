@@ -7,7 +7,7 @@ const router = Router();
 
 // TODO: Define route to serve index.html // 
 router.get('/', (_req, res) => {
-    res.send('Navigate to /send or /routes');
+  res.sendFile(path.join(__dirname, '../../../client/dist/index.html'));
   });
 
 // Create Express.js routes for default '/', '/send' and '/routes' endpoints

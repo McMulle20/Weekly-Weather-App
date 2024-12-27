@@ -1,5 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
+console.log(process.env.API_BASE_URL);
+console.log(process.env.API_KEY); 
 
 // TODO: Define an interface for the Coordinates object
 interface Coordinates {
@@ -24,7 +26,7 @@ class WeatherService {
 
   constructor() {
     this.baseURL = process.env.API_BASE_URL || '';
-    this.apiKey = process.env.OPENWEATHER_API_KEY || ''; // Use an environment variable for the API key
+    this.apiKey = process.env.API_KEY || ''; // Use an environment variable for the API key
     this.cityName = '';
   }
 
@@ -73,11 +75,11 @@ class WeatherService {
     const response = await fetch(url);
 
     if (!response.ok) {
-      throw new Error('Failed to fetch weather data');
+      throw new Error(`Failed to fetch weather data for city: ${this.cityName}, Status: ${response.status}`);
     }
 
     const data = await response.json();
-
+    console.log(data); //log entire response to ensure Openweather is coming back as expected
     return new Weather(
       data.main.temp,
       data.weather[0].description,
