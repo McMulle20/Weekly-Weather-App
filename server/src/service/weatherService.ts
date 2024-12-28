@@ -15,6 +15,7 @@ class Weather {
     public condition: string,
     public humidity: number,
     public windSpeed: number,
+    public city: string, //added this
   ) {}
 }
 // Complete the WeatherService class
@@ -81,12 +82,13 @@ class WeatherService {
     }
 
     const data = await response.json(); 
+    console.log(data);
     return {
       city: this.cityName,
       date: new Date(data.dt * 1000).toLocaleDateString(),
       icon: data.weather[0].icon,
       iconDescription: data.weather[0].description,
-      tempF: (data.main.temp * 9) / 5 + 32, // Convert to Fahrenheit
+      tempF: Math.round(((data.main.temp * 9) / 5 + 32)*10)/10, // Convert to Fahrenheit
       windSpeed: data.wind.speed,
       humidity: data.main.humidity,
     };

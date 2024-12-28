@@ -141,7 +141,7 @@ const renderForecastCard = (forecast: any) => {
 
 const renderSearchHistory = async (searchHistory: any) => {
   const historyList = await searchHistory.json();
-
+  console.log('History List:', historyList); //log history list
   if (searchHistoryContainer) {
     searchHistoryContainer.innerHTML = '';
 
@@ -235,7 +235,8 @@ const createHistoryDiv = () => {
 };
 
 const buildHistoryListItem = (city: any) => {
-  const newBtn = createHistoryButton(city.name);
+  console.log('Building history list item for city:', city); // Log each city
+  const newBtn = createHistoryButton(city.cityName);
   const deleteBtn = createDeleteButton();
   deleteBtn.dataset.city = JSON.stringify(city);
   const historyDiv = createHistoryDiv();
