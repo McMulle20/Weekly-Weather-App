@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
-console.log(process.env.API_BASE_URL);
-console.log(process.env.API_KEY); 
+console.log('API_BASE_URL:', process.env.API_BASE_URL);
+console.log('API_KEY:', process.env.API_KEY);
 
 // TODO: Define an interface for the Coordinates object
 interface Coordinates {
@@ -27,6 +27,8 @@ class WeatherService {
   constructor() {
     this.baseURL = process.env.API_BASE_URL || '';
     this.apiKey = process.env.API_KEY || ''; // Use an environment variable for the API key
+    console.log(this.baseURL); // Log the base URL
+    console.log(this.apiKey);   // Log the API key
     this.cityName = '';
   }
 
@@ -36,7 +38,7 @@ class WeatherService {
     const response = await fetch(url);
 
     if (!response.ok) {
-      throw new Error('Failed to fetch location data');
+      throw new Error(`Failed to fetch weather data for city: ${this.cityName}, Status: ${response.status}`);
     }
 
     const locationData = await response.json();
@@ -70,7 +72,7 @@ class WeatherService {
   }
 
   // Create fetchWeatherData method
-  private async fetchWeatherData(coordinates: Coordinates): Promise<Weather> {
+  private async fetchWeatherData(coordinates: Coordinates): Promise<any> {
     const url = this.buildWeatherQuery(coordinates);
     const response = await fetch(url);
 
@@ -78,14 +80,16 @@ class WeatherService {
       throw new Error(`Failed to fetch weather data for city: ${this.cityName}, Status: ${response.status}`);
     }
 
-    const data = await response.json();
-    console.log(data); //log entire response to ensure Openweather is coming back as expected
-    return new Weather(
-      data.main.temp,
-      data.weather[0].description,
-      data.main.humidity,
-      data.wind.speed
-    );
+    const data = await response.json(); 
+    return {
+      city: this.cityName,
+      date: new Date(data.dt * 1000).toLocaleDateString(),
+      icon: data.weather[0].icon,
+      iconDescription: data.weather[0].description,
+      tempF: (data.main.temp * 9) / 5 + 32, // Convert to Fahrenheit
+      windSpeed: data.wind.speed,
+      humidity: data.main.humidity,
+    };
   } 
 
   // Complete getWeatherForCity method
@@ -94,8 +98,7 @@ class WeatherService {
     const coordinates = await this.fetchAndDestructureLocationData();
 
     return await this.fetchWeatherData(coordinates);
-  }
+  };
 }
 
 export default new WeatherService();
-//ok..?

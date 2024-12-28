@@ -34,8 +34,9 @@ class HistoryService {
   async getCities(): Promise<City[]> {
     try {
       const data = await this.read();
-      return JSON.parse(data).map((cityData: any) => new City(cityData.cityName, cityData.id));
+      return data ? JSON.parse(data).map((cityData: any) => new City(cityData.cityName, cityData.id)) : [];
     } catch (err) {
+      console.error('Error reading search history');
       return []; // Return an empty array if there is an error
     }
   }
@@ -64,4 +65,3 @@ class HistoryService {
 }
 
 export default new HistoryService();
-//ok...

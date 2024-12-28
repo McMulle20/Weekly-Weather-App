@@ -15,7 +15,7 @@ router.get('/', (_req, res) => {
   router.get('/send', (_req, res) => {
     res.sendFile(path.join(__dirname, '../public/sendFile.html'), (err) => {
       if (err) {
-        res.status(500).json(err);
+        res.status(500).json({ error: 'Error sending file for /send endpoint', details: err.message });
       }
     });
   });
@@ -24,7 +24,7 @@ router.get('/', (_req, res) => {
   router.get('/routes', (_req, res) => {
     res.sendFile(path.join(__dirname, '../public/routes.html'), (err) => {
       if (err) {
-        res.status(500).json(err);
+        res.status(500).json({ error: 'Error sending file for /send endpoint', details: err.message });
       }
     });
   });
