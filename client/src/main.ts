@@ -47,8 +47,8 @@ const fetchWeather = async (cityName: string) => {
 
   console.log('weatherData: ', weatherData);
 
-  renderCurrentWeather(weatherData);
-  renderForecast(weatherData);
+  renderCurrentWeather(weatherData[0]);
+  renderForecast(weatherData.slice(1));
 };
 
 const fetchSearchHistory = async () => {
@@ -141,7 +141,7 @@ const renderForecastCard = (forecast: any) => {
 
 const renderSearchHistory = async (searchHistory: any) => {
   const historyList = await searchHistory.json();
-  console.log('History List:', historyList); //log history list
+
   if (searchHistoryContainer) {
     searchHistoryContainer.innerHTML = '';
 
@@ -235,7 +235,6 @@ const createHistoryDiv = () => {
 };
 
 const buildHistoryListItem = (city: any) => {
-  console.log('Building history list item for city:', city); // Log each city
   const newBtn = createHistoryButton(city.cityName);
   const deleteBtn = createDeleteButton();
   deleteBtn.dataset.city = JSON.stringify(city);
